@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>肝目舒心计划 - 大学生生理心理状态调查</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        h1 {
+            color: #2c7873;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        .subtitle {
+            color: #6c757d;
+            font-size: 16px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            color: #2c7873;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .option {
+            margin-bottom: 5px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .option:hover {
+            background-color: #e9ecef;
+        }
+        
+        .option.selected {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #2c7873;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background-color: #235f5a;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .result-container {
+            display: none;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .result-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        
+        .result-title {
+            font-size: 18px;
+            color: #2c7873;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .constitution-analysis {
+            background-color: #f8f9fa;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .healthy-status {
+            background-color: #f0f9eb;
+            border-left: 4px solid #67c23a;
+        }
+        
+        .tea-recommendation {
+            background-color: #f0f9eb;
+            border-left: 4px solid #67c23a;
+        }
+        
+        .meditation-recommendation {
+            background-color: #fdf6ec;
+            border-left: 4px solid #e6a23c;
+        }
+        
+        .eye-care-recommendation {
+            background-color: #fef0f0;
+            border-left: 4px solid #f56c6c;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: #e9ecef;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #2c7873;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .back-btn {
+            background-color: #6c757d;
+            margin-top: 10px;
+        }
+        
+        .meditation-scenario {
+            margin-bottom: 15px;
+            padding: 12px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .scenario-title {
+            font-weight: bold;
+            color: #e6a23c;
+            margin-bottom: 5px;
+        }
+        
+        .meditation-link {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background-color: #e6a23c;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .meditation-link:hover {
+            background-color: #cf8e2e;
+        }
+        
+        .admin-panel {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .admin-btn {
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c7873;
+            margin: 10px 0;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+            margin: 0 auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 6px;
+            overflow-x: auto;
+            display: block;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .data-table th {
+            background-color: #2c7873;
+            color: white;
+        }
+        
+        .login-panel {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .login-input {
+            width: 200px;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .history-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+        
+        .history-card:hover {
+            transform: translateX(5px);
+            background-color: #f8f9fa;
+        }
+        
+        .history-date {
+            color: #2c7873;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .history-summary {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .delete-history-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .delete-history-btn:hover {
+            background-color: #c82333;
+        }
+        
+        .view-history-btn {
+            background-color: #17a2b8;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        
+        .history-container {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .clear-all-btn {
+            background-color: #dc3545;
+            padding: 8px 16px;
+            font-size: 14px;
+            margin-top: 0;
+            width: auto;
+            display: inline-block;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-wrapper {
+                height: 250px;
+            }
+            
+            .data-table {
+                font-size: 12px;
+            }
+            
+            .history-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>肝目舒心计划 - 大学生生理心理状态调查</h1>
+            <p class="subtitle">本问卷将为您生成个性化的中医调理与正念冥想建议</p>
+        </header>
+        
+        <div class="login-panel" id="login-panel">
+            <h3>管理员登录</h3>
+            <input type="password" class="login-input" id="admin-password" placeholder="请输入管理员密码">
+            <button class="btn" onclick="login()">登录管理员模式</button>
+        </div>
+        
+        <div id="user-interface">
+            <button class="btn view-history-btn" id="view-history-btn" onclick="toggleHistory()">📋 查看历史记录</button>
+            
+            <div class="history-container" id="history-container">
+                <div class="history-header">
+                    <h3>您的历史评估记录</h3>
+                    <button class="btn clear-all-btn" onclick="clearAllHistory()">清空所有历史记录</button>
+                </div>
+                <div id="history-list"></div>
+                <button class="btn btn-secondary" onclick="closeHistory()">关闭</button>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            
+            <div id="questionnaire">
+                <div class="section">
+                    <h2 class="section-title">第一部分：中医自测</h2>
+                    <p style="margin-bottom: 15px; color: #6c757d;">请根据您近一个月的真实感受选择</p>
+                    
+                    <div class="question" data-section="tcm">
+                        <div class="question-text">1. 您是否经常感到眼睛干涩、疲劳？</div>
+                        <div class="options">
+                            <div class="option" data-value="1">A. 几乎没有</div>
+                            <div class="option" data-value="2">B. 偶尔</div>
+                            <div class="option" data-value="3">C. 经常</div>
+                            <div class="option" data-value="4">D. 总是</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="tcm">
+                        <div class="question-text">2. 您是否容易烦躁、易怒？</div>
+                        <div class="options">
+                            <div class="option" data-value="1">A. 几乎没有</div>
+                            <div class="option" data-value="2">B. 偶尔</div>
+                            <div class="option" data-value="3">C. 经常</div>
+                            <div class="option" data-value="4">D. 总是</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="tcm">
+                        <div class="question-text">3. 您是否感到口苦、咽干？</div>
+                        <div class="options">
+                            <div class="option" data-value="1">A. 几乎没有</div>
+                            <div class="option" data-value="2">B. 偶尔</div>
+                            <div class="option" data-value="3">C. 经常</div>
+                            <div class="option" data-value="4">D. 总是</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="tcm">
+                        <div class="question-text">4. 您是否睡眠不佳、多梦易醒？</div>
+                        <div class="options">
+                            <div class="option" data-value="1">A. 几乎没有</div>
+                            <div class="option" data-value="2">B. 偶尔</div>
+                            <div class="option" data-value="3">C. 经常</div>
+                            <div class="option" data-value="4">D. 总是</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="tcm">
+                        <div class="question-text">5. 您是否感到头晕、记忆力下降？</div>
+                        <div class="options">
+                            <div class="option" data-value="1">A. 几乎没有</div>
+                            <div class="option" data-value="2">B. 偶尔</div>
+                            <div class="option" data-value="3">C. 经常</div>
+                            <div class="option" data-value="4">D. 总是</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="tcm">
+                        <div class="question-text">6. 您的舌头是否偏红，舌苔较少或发黄？</div>
+                        <div class="options">
+                            <div class="option" data-value="1">A. 否，舌淡红苔薄白</div>
+                            <div class="option" data-value="2">B. 不确定</div>
+                            <div class="option" data-value="3">C. 是，舌红少苔或苔黄</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2 class="section-title">第二部分：行为学自测</h2>
+                    <p style="margin-bottom: 15px; color: #6c757d;">请根据您过去两周的真实感受选择</p>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">1. 感觉紧张、焦虑或不安</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">2. 无法停止或控制担忧</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">3. 对各种事情担心太多</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">4. 难以放松</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">5. 坐立不安，以至于很难安静地坐下来</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">6. 变得容易生气或急躁</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">7. 感觉害怕，好像有可怕的事情要发生</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">8. 做任何事都觉得沉闷或者根本不想做任何事</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">9. 情绪低落、抑郁或绝望</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">10. 难于入睡、半夜会醒或睡觉时间过多</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">11. 觉得疲倦或活力不足</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">12. 胃口极差或进食过量</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">13. 不喜欢自己、觉得自己做得不好、对自己失望或有负家人期望</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">14. 难于集中精神做事，例如看报纸或看电视</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">15. 行动或说话迟缓，或者相反地比平常活动更多、坐立不安、停不下来</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">16. 想到自己最好去死或者自残</div>
+                        <div class="options">
+                            <div class="option" data-value="0">完全没有</div>
+                            <div class="option" data-value="1">有几天</div>
+                            <div class="option" data-value="2">一半以上的天数</div>
+                            <div class="option" data-value="3">几乎每天</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">17. 一旦完成项目中具挑战性的部分后，您有多大频率会在项目最后的细节收尾部分感到困难？</div>
+                        <div class="options">
+                            <div class="option" data-value="0">从不</div>
+                            <div class="option" data-value="1">很少</div>
+                            <div class="option" data-value="2">有时</div>
+                            <div class="option" data-value="3">经常</div>
+                            <div class="option" data-value="4">非常频繁</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">18. 当必须完成一项需要条理性的任务时，您有多大频率会感到难以把事情组织得井井有条？</div>
+                        <div class="options">
+                            <div class="option" data-value="0">从不</div>
+                            <div class="option" data-value="1">很少</div>
+                            <div class="option" data-value="2">有时</div>
+                            <div class="option" data-value="3">经常</div>
+                            <div class="option" data-value="4">非常频繁</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">19. 您有多大频率会记不住约定的时间或该做的事？</div>
+                        <div class="options">
+                            <div class="option" data-value="0">从不</div>
+                            <div class="option" data-value="1">很少</div>
+                            <div class="option" data-value="2">有时</div>
+                            <div class="option" data-value="3">经常</div>
+                            <div class="option" data-value="4">非常频繁</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">20. 当必须进行需要大量思考的任务时，您有多大频率会逃避或推迟开始？</div>
+                        <div class="options">
+                            <div class="option" data-value="0">从不</div>
+                            <div class="option" data-value="1">很少</div>
+                            <div class="option" data-value="2">有时</div>
+                            <div class="option" data-value="3">经常</div>
+                            <div class="option" data-value="4">非常频繁</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">21. 当您长时间坐着时，您有多大频率会不停地在座位上动来动去或手脚多动？</div>
+                        <div class="options">
+                            <div class="option" data-value="0">从不</div>
+                            <div class="option" data-value="1">很少</div>
+                            <div class="option" data-value="2">有时</div>
+                            <div class="option" data-value="3">经常</div>
+                            <div class="option" data-value="4">非常频繁</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">22. 您有多大频率会感觉自己像被马达驱动了一样，停不下来或做过了头？</div>
+                        <div class="options">
+                            <div class="option" data-value="0">从不</div>
+                            <div class="option" data-value="1">很少</div>
+                            <div class="option" data-value="2">有时</div>
+                            <div class="option" data-value="3">经常</div>
+                            <div class="option" data-value="4">非常频繁</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">23. 您平均每天使用电子屏幕（手机、电脑、平板等）的时间约为？</div>
+                        <div class="options">
+                            <div class="option" data-value="1">A. 少于4小时</div>
+                            <div class="option" data-value="2">B. 4-8小时</div>
+                            <div class="option" data-value="3">C. 8-12小时</div>
+                            <div class="option" data-value="4">D. 超过12小时</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-section="behavior">
+                        <div class="question-text">24. 您是否愿意通过茶饮和正念冥想干预生理心理疲劳？</div>
+                        <div class="options">
+                            <div class="option" data-value="1">A. 不愿意</div>
+                            <div class="option" data-value="2">B. 可以考虑</div>
+                            <div class="option" data-value="3">C. 愿意尝试</div>
+                            <div class="option" data-value="4">D. 非常愿意</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" id="submit-btn">提交问卷，获取个性化建议</button>
+            </div>
+            
+            <div class="result-container" id="result-container">
+                <h1 style="text-align: center; margin-bottom: 30px; color: #2c7873;">您的"肝目舒心"个性化健康报告</h1>
+                
+                <div class="result-section constitution-analysis" id="constitution-section">
+                    <h3 class="result-title">🌿 中医体质分析</h3>
+                    <p id="constitution-type"></p>
+                    <p id="constitution-analysis"></p>
+                </div>
+                
+                <div class="result-section healthy-status" id="healthy-section" style="display: none;">
+                    <h3 class="result-title">💚 健康状况评估</h3>
+                    <p id="healthy-message"></p>
+                </div>
+                
+                <div class="result-section tea-recommendation" id="tea-section">
+                    <h3 class="result-title">🍵 茶饮推荐</h3>
+                    <p id="tea-name"></p>
+                    <p><strong>配方：</strong><span id="tea-formula"></span></p>
+                    <p><strong>饮用提示：</strong><span id="tea-instruction"></span></p>
+                </div>
+                
+                <div class="result-section meditation-recommendation">
+                    <h3 class="result-title">🧘 正念冥想方案推荐</h3>
+                    <div id="meditation-scenarios"></div>
+                </div>
+                
+                <div class="result-section eye-care-recommendation">
+                    <h3 class="result-title">📊 心理评估结果</h3>
+                    <p id="anxiety-score"></p>
+                    <p id="depression-score"></p>
+                    <p id="attention-result"></p>
+                </div>
+                
+                <button class="btn back-btn" id="back-btn">返回修改问卷</button>
+            </div>
+        </div>
+        
+        <div class="admin-panel" id="admin-panel">
+            <div class="admin-header">
+                <h2>管理员数据分析面板</h2>
+                <button class="admin-btn" onclick="logout()">退出管理员模式</button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div>总参与人数</div>
+                    <div class="stat-value" id="total-participants">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>健康状态</div>
+                    <div class="stat-value" id="healthy-count">0</div>
+                    <div id="healthy-percent">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div>肝郁化火证</div>
+                    <div class="stat-value" id="liver-fire-count">0</div>
+                    <div id="liver-fire-percent">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div>肝肾阴虚证</div>
+                    <div class="stat-value" id="yin-deficiency-count">0</div>
+                    <div id="yin-deficiency-percent">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div>混合证型</div>
+                    <div class="stat-value" id="mixed-count">0</div>
+                    <div id="mixed-percent">0%</div>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div>焦虑评分≥10分</div>
+                    <div class="stat-value" id="anxiety-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>抑郁评分≥10分</div>
+                    <div class="stat-value" id="depression-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>注意力问题倾向</div>
+                    <div class="stat-value" id="attention-count">0</div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3>中医证型分布</h3>
+                <div class="chart-wrapper">
+                    <canvas id="constitution-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3>焦虑评分分布</h3>
+                <div class="chart-wrapper">
+                    <canvas id="anxiety-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3>抑郁评分分布</h3>
+                <div class="chart-wrapper">
+                    <canvas id="depression-chart"></canvas>
+                </div>
+            </div>
+            
+            <h3>详细数据</h3>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>提交时间</th>
+                            <th>中医证型</th>
+                            <th>焦虑评分</th>
+                            <th>抑郁评分</th>
+                            <th>注意力问题</th>
+                            <th>屏幕使用时间</th>
+                          </tr>
+                    </thead>
+                    <tbody id="data-table-body">
+                    </tbody>
+                </table>
+            </div>
+            
+            <button class="btn" onclick="exportData()" style="margin-top: 20px;">导出数据为CSV</button>
+        </div>
+    </div>
+
+    <script>
+        // 冥想资源链接
+        const meditationResources = {
+            "学习间歇": {
+                url: "https://www.bilibili.com/video/BV1F44y1D7CL/",
+                method: "呼吸正念（3-3-3呼吸法）",
+                duration: "3分钟",
+                description: "将注意力集中于呼吸的自然节奏，快速稳定心神，恢复专注。"
+            },
+            "睡前复盘": {
+                url: "https://www.bilibili.com/video/BV1Y3411K79H/",
+                method: "开放式觉察",
+                duration: "10分钟",
+                description: "不聚焦特定对象，观察所有内在体验的流动，减少思虑，帮助入睡。"
+            },
+            "身体扫描": {
+                url: "https://www.bilibili.com/video/BV15z4y1b7Ua/",
+                method: "身体扫描",
+                duration: "10分钟",
+                description: "系统性地觉察身体各部位的感受，释放紧张，深度放松身心。"
+            },
+            "社交之后": {
+                url: "https://www.bilibili.com/video/BV1WKn3z6Ec9/",
+                method: "慈悲冥想",
+                duration: "5分钟",
+                description: "通过祝福语培养对自己及他人的善意与共情，化解社交带来的负面情绪。"
+            },
+            "基础护眼": {
+                url: "#",
+                method: "护眼正念休息术",
+                duration: "随时可做",
+                description: "结合屏幕休息，引导用户闭眼、放松眼部肌肉，并配合深呼吸。"
+            }
+        };
+
+        // ==================== 120份预生成模拟数据 ====================
+        const MOCK_DATA = [
+            { timestamp: "2025/5/1 10:23:15", constitutionType: "肝郁化火证", anxietyScore: 12, depressionScore: 8, hasAttentionIssue: false, screenTime: "8-12小时", willingIntervention: 3 },
+            { timestamp: "2025/5/1 14:35:22", constitutionType: "肝肾阴虚证", anxietyScore: 9, depressionScore: 13, hasAttentionIssue: true, screenTime: "超过12小时", willingIntervention: 4 },
+            { timestamp: "2025/5/2 09:12:08", constitutionType: "健康状态", anxietyScore: 3, depressionScore: 2, hasAttentionIssue: false, screenTime: "4-8小时", willingIntervention: 2 },
+            { timestamp: "2025/5/2 16:45:33", constitutionType: "混合证型（肝郁化火兼肝肾阴虚）", anxietyScore: 15, depressionScore: 14, hasAttentionIssue: true, screenTime: "超过12小时", willingIntervention: 4 },
+            { timestamp: "2025/5/3 11:20:47", constitutionType: "肝郁化火证", anxietyScore: 11, depressionScore: 7, hasAttentionIssue: false, screenTime: "8-12小时", willingIntervention: 3 },
+            { timestamp: "2025/5/3 13:58:12", constitutionType: "肝肾阴虚证", anxietyScore: 6, depressionScore: 10, hasAttentionIssue: false, screenTime: "8-12小时", willingIntervention: 3 },
+            { timestamp: "2025/5/4 08:30:05", constitutionType: "肝郁化火证", anxietyScore: 14, depressionScore: 9, hasAttentionIssue: true, screenTime: "超过12小时", willingIntervention: 4 },
+            { timestamp: "2025/5/4 19:15:44", constitutionType: "健康状态", anxietyScore: 2, depressionScore: 3, hasAttentionIssue: false, screenTime: "少于4小时", willingIntervention: 2 },
+            { timestamp: "2025/5/5 10:05:33", constitutionType: "混合证型（肝郁化火兼肝肾阴虚）", anxietyScore: 13, depressionScore: 12, hasAttentionIssue: true, screenTime: "超过12小时", willingIntervention: 4 },
+            { timestamp: "2025/5/5 15:40:21", constitutionType: "肝肾阴虚证", anxietyScore: 7, depressionScore: 11, hasAttentionIssue: false, screenTime: "8-12小时", willingIntervention: 3 },
+            { timestamp: "2025/5/6 09:55:10", constitutionType: "肝郁化火证", anxietyScore: 10, depressionScore: 6, hasAttentionIssue: false, screenTime: "8-12小时", willingIntervention: 3 },
+            { timestamp: "2025/5/6 14:20:55", constitutionType: "健康状态", anxietyScore: 4, depressionScore: 3, hasAttentionIssue: false, screenTime: "4-8小时", willingIntervention: 2 }
+        ];
+
+        // 扩展模拟数据到120份（为了代码简洁，这里只显示部分，实际运行时会动态生成）
+        // 生成更多模拟数据
+        while (MOCK_DATA.length < 120) {
+            const types = ["健康状态", "肝郁化火证", "肝肾阴虚证", "混合证型（肝郁化火兼肝肾阴虚）"];
+            const weights = [0.15, 0.35, 0.25, 0.25];
+            let rand = Math.random();
+            let type;
+            if (rand < 0.15) type = "健康状态";
+            else if (rand < 0.5) type = "肝郁化火证";
+            else if (rand < 0.75) type = "肝肾阴虚证";
+            else type = "混合证型（肝郁化火兼肝肾阴虚）";
+            
+            let anxiety, depression;
+            if (type === "健康状态") { anxiety = Math.floor(Math.random() * 5); depression = Math.floor(Math.random() * 5); }
+            else if (type === "肝郁化火证") { anxiety = Math.floor(Math.random() * 10) + 5; depression = Math.floor(Math.random() * 8) + 4; }
+            else if (type === "肝肾阴虚证") { anxiety = Math.floor(Math.random() * 9) + 4; depression = Math.floor(Math.random() * 11) + 5; }
+            else { anxiety = Math.floor(Math.random() * 12) + 6; depression = Math.floor(Math.random() * 12) + 6; }
+            
+            const hasAttention = Math.random() < 0.35;
+            const screenTimes = ["少于4小时", "4-8小时", "8-12小时", "超过12小时"];
+            const screenTime = screenTimes[Math.floor(Math.random() * 4)];
+            
+            MOCK_DATA.push({
+                timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleString(),
+                constitutionType: type,
+                anxietyScore: anxiety,
+                depressionScore: depression,
+                hasAttentionIssue: hasAttention,
+                screenTime: screenTime,
+                willingIntervention: Math.floor(Math.random() * 4) + 1
+            });
+        }
+        MOCK_DATA.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        // 初始化数据：如果localStorage中没有数据，则加载预生成的模拟数据
+        let allResults = JSON.parse(localStorage.getItem('gmsx_results'));
+        if (!allResults || allResults.length === 0) {
+            allResults = MOCK_DATA;
+            localStorage.setItem('gmsx_results', JSON.stringify(allResults));
+        }
+        
+        let currentUserResults = JSON.parse(localStorage.getItem('gmsx_current_user')) || [];
+        let chartInstances = {};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const options = document.querySelectorAll('.option');
+            const submitBtn = document.getElementById('submit-btn');
+            const backBtn = document.getElementById('back-btn');
+            const questionnaire = document.getElementById('questionnaire');
+            const resultContainer = document.getElementById('result-container');
+            const progressBar = document.getElementById('progress');
+            
+            function updateProgressBar() {
+                const totalQuestions = document.querySelectorAll('.question').length;
+                const answeredQuestions = document.querySelectorAll('.option.selected').length;
+                const progress = (answeredQuestions / totalQuestions) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+            
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    const question = this.closest('.question');
+                    const optionsInQuestion = question.querySelectorAll('.option');
+                    optionsInQuestion.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    updateProgressBar();
+                });
+            });
+            
+            submitBtn.addEventListener('click', function() {
+                const allQuestions = document.querySelectorAll('.question');
+                let allAnswered = true;
+                allQuestions.forEach(question => {
+                    if (!question.querySelector('.option.selected')) allAnswered = false;
+                });
+                if (!allAnswered) { alert('请回答所有问题后再提交！'); return; }
+                
+                const scores = calculateScores();
+                const result = generateResults(scores);
+                currentUserResults.unshift(result);
+                localStorage.setItem('gmsx_current_user', JSON.stringify(currentUserResults));
+                saveResult(result);
+                
+                questionnaire.style.display = 'none';
+                resultContainer.style.display = 'block';
+            });
+            
+            backBtn.addEventListener('click', function() {
+                resultContainer.style.display = 'none';
+                questionnaire.style.display = 'block';
+            });
+            
+            function calculateScores() {
+                const questions = document.querySelectorAll('.question');
+                const scores = {};
+                questions.forEach((question, index) => {
+                    const selectedOption = question.querySelector('.option.selected');
+                    if (selectedOption) scores[`q${index+1}`] = parseInt(selectedOption.getAttribute('data-value'));
+                });
+                return scores;
+            }
+            
+            function generateResults(scores) {
+                const isHealthy = scores.q1 === 1 && scores.q2 === 1 && scores.q3 === 1 && scores.q4 === 1 && scores.q5 === 1 && scores.q6 === 1;
+                let constitutionType, constitutionAnalysis, teaName, teaFormula, teaInstruction;
+                
+                // 计算焦虑评分（前7题）
+                const anxietyScore = (scores.q1 || 0) + (scores.q2 || 0) + (scores.q3 || 0) + (scores.q4 || 0) + (scores.q5 || 0) + (scores.q6 || 0) + (scores.q7 || 0);
+                // 计算抑郁评分（第8-16题）
+                const depressionScore = (scores.q8 || 0) + (scores.q9 || 0) + (scores.q10 || 0) + (scores.q11 || 0) + (scores.q12 || 0) + (scores.q13 || 0) + (scores.q14 || 0) + (scores.q15 || 0) + (scores.q16 || 0);
+                
+                // 注意力问题评估
+                const att1 = scores.q17 || 0, att2 = scores.q18 || 0, att3 = scores.q19 || 0;
+                const att4 = scores.q20 || 0, att5 = scores.q21 || 0, att6 = scores.q22 || 0;
+                const hasAttentionIssue = (att1 >= 3 && att2 >= 3) || (att1 >= 3 && att3 >= 3) || (att2 >= 3 && att3 >= 3) || att4 >= 3 || att5 >= 3 || att6 >= 3;
+                
+                let anxietyInterpretation = anxietyScore >= 15 ? "重度焦虑倾向" : (anxietyScore >= 10 ? "中度焦虑倾向" : (anxietyScore >= 5 ? "轻度焦虑倾向" : "焦虑水平正常"));
+                let depressionInterpretation = depressionScore >= 15 ? "重度抑郁倾向" : (depressionScore >= 10 ? "中度抑郁倾向" : (depressionScore >= 5 ? "轻度抑郁倾向" : "抑郁水平正常"));
+                
+                if (isHealthy) {
+                    constitutionType = "健康状态";
+                    document.getElementById('constitution-section').style.display = 'none';
+                    document.getElementById('healthy-section').style.display = 'block';
+                    document.getElementById('tea-section').style.display = 'none';
+                    document.getElementById('healthy-message').innerHTML = "🎉 <strong>恭喜您！</strong>根据您的中医自测结果，您目前处于相对健康的状态。<br>您的肝气调达，气血充足，阴阳平衡，没有明显的肝郁化火或肝肾阴虚表现。<br>建议继续保持良好的生活习惯，适当进行正念冥想练习以维持身心健康。";
+                } else {
+                    document.getElementById('constitution-section').style.display = 'block';
+                    document.getElementById('healthy-section').style.display = 'none';
+                    document.getElementById('tea-section').style.display = 'block';
+                    
+                    const liverFireScore = (scores.q2 || 0) + (scores.q3 || 0) + (scores.q6 || 0);
+                    const liverKidneyYinDeficiencyScore = (scores.q1 || 0) + (scores.q4 || 0) + (scores.q5 || 0);
+                    
+                    if (liverFireScore - liverKidneyYinDeficiencyScore >= 3) {
+                        constitutionType = "肝郁化火证";
+                        constitutionAnalysis = "您目前处于'肝气郁结，郁而化火'的状态，易出现眼干、烦躁、口苦等症状。";
+                    } else if (liverKidneyYinDeficiencyScore - liverFireScore >= 3) {
+                        constitutionType = "肝肾阴虚证";
+                        constitutionAnalysis = "您的主要问题在于长期消耗，肝肾精血不足，津液亏虚，易出现眼干涩、头晕、记忆力差、睡眠不佳。";
+                    } else {
+                        constitutionType = "混合证型（肝郁化火兼肝肾阴虚）";
+                        constitutionAnalysis = "您同时存在肝火偏旺和阴血不足的复杂情况，需要疏肝与滋阴并举。";
+                    }
+                    
+                    const qiBloodDeficiency = ((scores.q4 || 0) + (scores.q5 || 0)) >= 6;
+                    const heatSigns = ((scores.q2 || 0) + (scores.q3 || 0) + (scores.q6 || 0)) >= 8;
+                    const teaResult = generateTeaFormula(constitutionType, qiBloodDeficiency, heatSigns);
+                    teaName = teaResult.name;
+                    teaFormula = teaResult.formula;
+                    teaInstruction = teaResult.instruction;
+                    
+                    document.getElementById('constitution-type').textContent = `中医证型：${constitutionType}`;
+                    document.getElementById('constitution-analysis').textContent = constitutionAnalysis;
+                    document.getElementById('tea-name').textContent = teaName;
+                    document.getElementById('tea-formula').textContent = teaFormula;
+                    document.getElementById('tea-instruction').textContent = teaInstruction;
+                }
+                
+                // 冥想场景判断
+                const meditationScenarios = [];
+                if ((scores.q9 || 0) >= 3 || (scores.q14 || 0) >= 3) meditationScenarios.push("学习间歇");
+                if ((scores.q10 || 0) >= 3) { meditationScenarios.push("睡前复盘"); meditationScenarios.push("身体扫描"); }
+                if ((scores.q11 || 0) >= 3) meditationScenarios.push("社交之后");
+                if ((scores.q23 || 0) >= 3) meditationScenarios.push("基础护眼");
+                
+                const meditationContainer = document.getElementById('meditation-scenarios');
+                meditationContainer.innerHTML = '';
+                if (meditationScenarios.length > 0) {
+                    [...new Set(meditationScenarios)].forEach(scenario => {
+                        const resource = meditationResources[scenario];
+                        if (resource) {
+                            const div = document.createElement('div');
+                            div.className = 'meditation-scenario';
+                            div.innerHTML = `<div class="scenario-title">${scenario} · ${resource.method}（${resource.duration}）</div><div>${resource.description}</div><a href="${resource.url}" class="meditation-link" target="_blank">开始冥想练习</a>`;
+                            meditationContainer.appendChild(div);
+                        }
+                    });
+                } else {
+                    meditationContainer.innerHTML = '<p>根据您的回答，暂无特别推荐的冥想方案。建议您尝试基础的正念呼吸练习。</p>';
+                }
+                
+                document.getElementById('anxiety-score').innerHTML = `<strong>焦虑评分：</strong> ${anxietyScore}分 - ${anxietyInterpretation}`;
+                document.getElementById('depression-score').innerHTML = `<strong>抑郁评分：</strong> ${depressionScore}分 - ${depressionInterpretation}`;
+                document.getElementById('attention-result').innerHTML = `<strong>注意力评估：</strong> ${hasAttentionIssue ? "存在注意力方面的相关行为特征，建议进一步关注和评估" : "未发现明显注意力问题"}`;
+                
+                let screenTime = "";
+                if (scores.q23 === 1) screenTime = "少于4小时";
+                else if (scores.q23 === 2) screenTime = "4-8小时";
+                else if (scores.q23 === 3) screenTime = "8-12小时";
+                else screenTime = "超过12小时";
+                
+                return {
+                    timestamp: new Date().toLocaleString(),
+                    constitutionType: isHealthy ? "健康状态" : constitutionType,
+                    anxietyScore: anxietyScore,
+                    depressionScore: depressionScore,
+                    hasAttentionIssue: hasAttentionIssue,
+                    screenTime: screenTime,
+                    willingIntervention: scores.q24 || 0
+                };
+            }
+            
+            function generateTeaFormula(constitutionType, qiBloodDeficiency, heatSigns) {
+                let baseFormula = "桑葚3g、枸杞子4g、菊花3g、佛手花3g、酒萸肉3g、干石斛4g、麦冬3g";
+                let additionalHerbs = [];
+                let teaName = "清肝明目润眼饮";
+                if (constitutionType === "肝郁化火证") teaName += "（清热疏肝版）";
+                else if (constitutionType === "肝肾阴虚证") teaName += "（滋补肝肾版）";
+                else teaName += "（基础方）";
+                if (qiBloodDeficiency) { additionalHerbs.push("黄芪3g", "太子参3g", "大枣3g"); teaName += " · 益气养血"; }
+                if (heatSigns) { additionalHerbs.push("夏枯草3g", "焦栀子3g"); teaName += " · 清热降火"; }
+                if (additionalHerbs.length === 0) additionalHerbs.push("黄芪3g", "大枣3g");
+                return { name: teaName, formula: baseFormula + "、" + additionalHerbs.join("、"), instruction: "每日一包，沸水冲泡，反复饮用至味淡。孕妇及糖尿病患者慎用。" };
+            }
+            
+            function saveResult(result) {
+                allResults.unshift(result);
+                localStorage.setItem('gmsx_results', JSON.stringify(allResults));
+            }
+        });
+        
+        // 显示历史记录
+        function toggleHistory() {
+            const container = document.getElementById('history-container');
+            if (container.style.display === 'block') {
+                container.style.display = 'none';
+            } else {
+                loadHistoryList();
+                container.style.display = 'block';
+            }
+        }
+        
+        // 加载历史记录列表
+        function loadHistoryList() {
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            
+            if (currentUserResults.length === 0) {
+                list.innerHTML = '<p style="text-align:center;padding:20px;">暂无历史记录，请先填写问卷。</p>';
+                return;
+            }
+            
+            currentUserResults.forEach((result, index) => {
+                const card = document.createElement('div');
+                card.className = 'history-card';
+                card.innerHTML = `
+                    <div class="history-date">📅 ${result.timestamp}</div>
+                    <div class="history-summary">
+                        <span>证型：${result.constitutionType}</span>
+                        <span>焦虑：${result.anxietyScore}分</span>
+                        <span>抑郁：${result.depressionScore}分</span>
+                        <span>注意力：${result.hasAttentionIssue ? "需关注" : "正常"}</span>
+                    </div>
+                    <button class="delete-history-btn" onclick="deleteHistoryItem(${index})">删除</button>
+                `;
+                card.onclick = (e) => {
+                    if (e.target !== card.querySelector('.delete-history-btn')) {
+                        alert(`历史评估结果\n\n提交时间：${result.timestamp}\n中医证型：${result.constitutionType}\n焦虑评分：${result.anxietyScore}分\n抑郁评分：${result.depressionScore}分\n注意力问题：${result.hasAttentionIssue ? "存在相关特征" : "未发现"}\n屏幕使用时间：${result.screenTime}`);
+                    }
+                };
+                list.appendChild(card);
+            });
+        }
+        
+        // 删除单条历史记录
+        function deleteHistoryItem(index) {
+            if (confirm('确定要删除这条历史记录吗？')) {
+                currentUserResults.splice(index, 1);
+                localStorage.setItem('gmsx_current_user', JSON.stringify(currentUserResults));
+                loadHistoryList();
+            }
+        }
+        
+        // 清空所有历史记录
+        function clearAllHistory() {
+            if (confirm('确定要清空所有历史记录吗？此操作不可恢复！')) {
+                currentUserResults = [];
+                localStorage.setItem('gmsx_current_user', JSON.stringify(currentUserResults));
+                loadHistoryList();
+            }
+        }
+        
+        function closeHistory() { 
+            document.getElementById('history-container').style.display = 'none'; 
+        }
+        
+        function login() {
+            const password = document.getElementById('admin-password').value;
+            if (password === 'admin123') {
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('user-interface').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                loadAdminData();
+            } else { alert('密码错误！'); }
+        }
+        
+        function logout() {
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('login-panel').style.display = 'block';
+            document.getElementById('user-interface').style.display = 'block';
+        }
+        
+        function loadAdminData() {
+            const total = allResults.length;
+            document.getElementById('total-participants').textContent = total;
+            
+            const constitutionCounts = { "健康状态": 0, "肝郁化火证": 0, "肝肾阴虚证": 0, "混合证型（肝郁化火兼肝肾阴虚）": 0 };
+            allResults.forEach(r => { constitutionCounts[r.constitutionType]++; });
+            
+            document.getElementById('healthy-count').textContent = constitutionCounts["健康状态"];
+            document.getElementById('liver-fire-count').textContent = constitutionCounts["肝郁化火证"];
+            document.getElementById('yin-deficiency-count').textContent = constitutionCounts["肝肾阴虚证"];
+            document.getElementById('mixed-count').textContent = constitutionCounts["混合证型（肝郁化火兼肝肾阴虚）"];
+            
+            const totalNonNull = total || 1;
+            document.getElementById('healthy-percent').textContent = Math.round(constitutionCounts["健康状态"] / totalNonNull * 100) + '%';
+            document.getElementById('liver-fire-percent').textContent = Math.round(constitutionCounts["肝郁化火证"] / totalNonNull * 100) + '%';
+            document.getElementById('yin-deficiency-percent').textContent = Math.round(constitutionCounts["肝肾阴虚证"] / totalNonNull * 100) + '%';
+            document.getElementById('mixed-percent').textContent = Math.round(constitutionCounts["混合证型（肝郁化火兼肝肾阴虚）"] / totalNonNull * 100) + '%';
+            
+            const anxietyCount = allResults.filter(r => r.anxietyScore >= 10).length;
+            const depressionCount = allResults.filter(r => r.depressionScore >= 10).length;
+            const attentionCount = allResults.filter(r => r.hasAttentionIssue).length;
+            document.getElementById('anxiety-count').textContent = anxietyCount;
+            document.getElementById('depression-count').textContent = depressionCount;
+            document.getElementById('attention-count').textContent = attentionCount;
+            
+            const tableBody = document.getElementById('data-table-body');
+            tableBody.innerHTML = '';
+            allResults.forEach((result, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${index + 1}</td><td>${result.timestamp}</td><td>${result.constitutionType}</td><td>${result.anxietyScore}</td><td>${result.depressionScore}</td><td>${result.hasAttentionIssue ? "是" : "否"}</td><td>${result.screenTime}</td>`;
+                tableBody.appendChild(row);
+            });
+            
+            drawCharts(constitutionCounts, allResults);
+        }
+        
+        function drawCharts(constitutionCounts, results) {
+            Object.values(chartInstances).forEach(chart => { if (chart) chart.destroy(); });
+            
+            const constitutionCtx = document.getElementById('constitution-chart').getContext('2d');
+            chartInstances.constitutionChart = new Chart(constitutionCtx, {
+                type: 'pie', data: { labels: Object.keys(constitutionCounts), datasets: [{ data: Object.values(constitutionCounts), backgroundColor: ['#4CAF50', '#FF9800', '#2196F3', '#9C27B0'], borderWidth: 2 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+            });
+            
+            const anxietyLevels = { "0-4分(正常)": 0, "5-9分(轻度)": 0, "10-14分(中度)": 0, "15-21分(重度)": 0 };
+            results.forEach(r => { if (r.anxietyScore <= 4) anxietyLevels["0-4分(正常)"]++; else if (r.anxietyScore <= 9) anxietyLevels["5-9分(轻度)"]++; else if (r.anxietyScore <= 14) anxietyLevels["10-14分(中度)"]++; else anxietyLevels["15-21分(重度)"]++; });
+            const anxietyCtx = document.getElementById('anxiety-chart').getContext('2d');
+            chartInstances.anxietyChart = new Chart(anxietyCtx, { type: 'pie', data: { labels: Object.keys(anxietyLevels), datasets: [{ data: Object.values(anxietyLevels), backgroundColor: ['#4CAF50', '#FFC107', '#FF9800', '#F44336'], borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
+            
+            const depressionLevels = { "0-4分(正常)": 0, "5-9分(轻度)": 0, "10-14分(中度)": 0, "15-27分(重度)": 0 };
+            results.forEach(r => { if (r.depressionScore <= 4) depressionLevels["0-4分(正常)"]++; else if (r.depressionScore <= 9) depressionLevels["5-9分(轻度)"]++; else if (r.depressionScore <= 14) depressionLevels["10-14分(中度)"]++; else depressionLevels["15-27分(重度)"]++; });
+            const depressionCtx = document.getElementById('depression-chart').getContext('2d');
+            chartInstances.depressionChart = new Chart(depressionCtx, { type: 'pie', data: { labels: Object.keys(depressionLevels), datasets: [{ data: Object.values(depressionLevels), backgroundColor: ['#4CAF50', '#FFC107', '#FF9800', '#F44336'], borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
+        }
+        
+        function exportData() {
+            if (allResults.length === 0) { alert('没有数据可导出！'); return; }
+            let csv = '\uFEFF序号,提交时间,中医证型,焦虑评分,抑郁评分,注意力问题,屏幕使用时间\n';
+            allResults.forEach((r, i) => { csv += `${i+1},${r.timestamp},${r.constitutionType},${r.anxietyScore},${r.depressionScore},${r.hasAttentionIssue ? "是" : "否"},${r.screenTime}\n`; });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '肝目舒心计划调查数据.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+    </script>
+</body>
+</html>
